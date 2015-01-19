@@ -12,7 +12,9 @@
       <% (0...8).each do |r| #rank %>
         <% (0...8).each do |f| #file %>
         <div class="square <%= ((r + f) % 2 == 1) ? "dark" : "light" %>"
-             data-pgn=<%= "#{('a'.ord+f).chr}#{8-r}"%>></div>
+             data-pgn=<%= "#{('a'.ord+f).chr}#{8-r}"%>>
+           <div class=attackers></div>
+        </div>
         <% end %>
       <% end %>
       </div>

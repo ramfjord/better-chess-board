@@ -32,49 +32,58 @@ var board = (function() {
       return $(selector);
     };
 
-    that.$attacked_squares = function() {
-      return $(".attacker[data-square=" + this.pgn_code() + "]")
-    }
-
+    var attacking = [];
     // mark all squares attacked by the piece in that square
-    that.mark_attacked_squares = function() {
-      this.$attacked_squares().remove();
-      var my_pgn = this.pgn_code();
+    that.mark_attacking = function() {
+      var now_attacking = (piece && piece.attacks()) || [];
+      var me = this;
+      _(_.difference(now_attacking, attacking)).forEach(function(sq) { sq.add_attacker(me) });
+      _(_.difference(attacking, now_attacking)).forEach(function(sq) { sq.remove_attacker(me) });
+      attacking = now_attacking;
+    };
+
+    // clears a square on the board, removing any pieces and recalculating attacks
+    that.clear = function() {
       if(piece) {
-        _(piece.attacks()).forEach(function(sq) {
-          sq.$get().append('<div class="attacker" ' + 
-                           'data-square="' + my_pgn + '"' +
-                           'data-piece="' + piece.pgn_code() + '"' +
-                           'data-color="' + piece.color() + '"></div>');
+        that.$get().children("img").remove();
+        piece = null;
+
+        that.mark_attacking();
+        
+        // if we're now blocking attacks, mark that
+        _(attackers).forEach(function(a) {
+          a.mark_attacking();
         });
       }
     };
 
-    // recalculate all of the attack squares for everything previously attacking
-    // "that" square
-    var recalculate_attackers = function() {
-      _(that.$get().children(".attacker")).forEach( function($square) {
-        var square_pgn = $($square).data().square;
-        board.get(square_pgn).mark_attacked_squares();
-      });
-    };
-
-    that.clear = function() {
-      if(piece) {
-        this.$get().children("img").remove();
-        piece = null;
-
-        this.$attacked_squares().remove();
-        recalculate_attackers();
-      }
-    };
-
-    // remove a piece from the board, returning it.  Recalculate all the attacks
-    // that were affected by removing the piece as well.
+    // remove a piece from the board, returning it and marking it as held.
+    // Recalculate all the attacks that were affected by removing the piece as
+    // well.
     that.pick_up = function() {
       held_piece = piece; // board global
       this.clear();
       return held_piece;
+    };
+
+    // Place a piece on the board, recalculating all the attacks that affect
+    // that square
+    that.place = function(new_piece) {
+      this.clear();
+      piece = new_piece;
+
+      if (piece) {
+        piece.place(this);
+        this.$get().append("<img src=\"" + piece.image_url() + "\">");
+        this.mark_attacking();
+
+        // if we're now blocking attacks, mark that
+        _(attackers).forEach(function(a) {
+          a.mark_attacking();
+        });
+
+        bind_piece_callbacks.apply(this);
+      }
     };
 
     var bind_piece_callbacks = function() {
@@ -86,7 +95,7 @@ var board = (function() {
         , my_piece = piece
         , my_place = function(sq) {
             $('.square.valid-move').removeClass('valid-move');
-            $('.square').off();
+            $('.square').off('mouseup');
             $(document).off('mousemove');
             $('.board').off('mouseleave');
             $('#held_piece').remove();
@@ -94,18 +103,21 @@ var board = (function() {
             held_piece = null;
         };
 
-      this.$get().children("img").on('mousedown', function(e1) {
+      this.$get().on('mousedown', function(e1) {
+
+        held_piece = my_piece;
         // mark the squares you can move to
-        _(piece.moves()).forEach(function(sq) {
+        _(my_piece.moves()).forEach(function(sq) {
           sq.$get().addClass('valid-move');
         });
 
-        // pick the piece up
-        scope.pick_up.apply(scope);
-        my_board.$get().append('<img id=held_piece src="' + held_piece.image_url() + '" ' + 
+        // pick the piece up and mark it is held
+        scope.pick_up();
+
+        // keep the piece next to the mouse when you move it
+        my_board.$get().append('<img id=held_piece src="' + my_piece.image_url() + '" ' + 
           'style="left:' + e1.pageX + 'px; top:' + e1.pageY + 'px; z-index: 10;">');
 
-        // keep the piece next to the mosue when you move it
         $(document).on('mousemove', function(e) {
           $('#held_piece').css({left: e.pageX, top: e.pageY })
         });
@@ -125,24 +137,54 @@ var board = (function() {
         $('.square:not(.valid-move)').on('mouseup', function() {
           my_place(orig_square);
         });
+
+        // we can no longer lift up this piece on this square...
+        $(this).off('mousedown');
       });
     }
 
-    // Place a piece on the board, recalculating all the attacks that affect
-    // that square
-    that.place = function(new_piece) {
-      this.clear();
-      piece = new_piece;
+    var attackers = {};
+    that.add_attacker = function(square) {
+      attackers[square.pgn_code()] = square;
+      display_attackers();
+    }
 
-      if (piece) {
-        piece.place(this);
-        this.$get().append("<img src=\"" + piece.image_url() + "\">");
-        recalculate_attackers();
-        this.mark_attacked_squares();
+    that.remove_attacker = function(square) {
+      delete attackers[square.pgn_code()];
+      display_attackers();
+    }
 
-        bind_piece_callbacks.apply(this);
-      }
-    };
+    var display_attackers = function() {
+      var colors = [ 'transparent'
+                   , 'hsla(60, 100%,35%,1)'
+                   , 'hsla(86,100%,48%,1)'
+                   , 'hsla(116,100%,38%,1)'
+                   , 'hsla(180,50%,45%,1)'
+                   , 'hsla(210,50%,45%,1)'
+                   , 'hsla(240,50%,45%,1)'
+                   , 'hsla(270,50%,45%,1)'
+                   , 'hsla(300,50%,45%,1)'
+                   , 'hsla(330,50%,45%,1)'
+                   , 'hsla(0,50%,45%,1)' ]
+      var num_dark = 0, num_light = 0;
+      _.forEach(attackers, function (a) {
+        if (a.piece().color() == board.LIGHT) {
+          num_light += 1;
+        }
+        else {
+          num_dark += 1;
+        }
+      });
+
+      var col_light = (num_light >= colors.length) ? _.last(colors) : colors[num_light]
+        , col_dark  = (num_dark >= colors.length)  ? _.last(colors) : colors[num_dark];
+
+      var $attackers = that.$get().children('.attackers')
+      $attackers.css('border-top-color', col_dark);
+      $attackers.css('border-right-color', col_dark);
+      $attackers.css('border-bottom-color', col_light);
+      $attackers.css('border-left-color', col_light);
+    }
 
     return that;
   };

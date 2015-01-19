@@ -54,6 +54,7 @@ square's also have methods with the logic for moving pieces.  These are the only
 Roughly prioritized list
 
 * Make prettier/more functional markers for which pieces are attacking which squares
+  * refactor out code/css for marking attacked squares, so that different methods can be plugged in at will
 * Add pgn notation parser + loader
 * When you are moving a piece, updated the attacked squares as if you've moved it to the square you're hovering over
 * Add board flip animations

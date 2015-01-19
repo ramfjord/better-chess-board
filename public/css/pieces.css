@@ -18,8 +18,8 @@
   font-size: 0;
 }
 .square { 
+  opacity 0.93;
   display: inline-block;
-  z-index -1;
   position: relative;
   height: 12.5%;
   width: 12.5%;
@@ -31,34 +31,44 @@
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+ */
 
-  /* Rules below not implemented in browsers yet */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
 }
 
-.square .attacker {
+.square .attackers {
   z-index: 2;
+  left: 50%;
+  top: 50%;
   position: absolute;
-  width: 100%;
-  height: 10%;
-  background-color: red;
-  opacity: 0.35;
-   
-  -webkit-user-select: none; /* Chrome/Safari */        
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+ */
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-width: 8px;
+  margin: -8px 0 0 -8px;
+  border-style: solid;
+  opacity: 1;
 
-  /* Rules below not implemented in browsers yet */
+  transform: rotate(-45deg);
+
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-}
 
-.square .attacker[data-color="l"] {
-  top: 90%;
+  pointer-events: none;
 }
 
 .square img {
-  z-index: 3;
+  pointer-events: none;
+  z-index: 1;
   position: absolute;
   width: 100%;
   height: 100%;
