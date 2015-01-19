@@ -1,8 +1,14 @@
-# JSChessboard
+# Better Chess Board
 
 The goal of this short javascipt chess app is to show new players what to look for on the board.  There is no engine attached, it just adds notation to the board to help show which squares are attacked by which pieces.
 
-To see what the current (crappy) board/attacker notation looks like, see screenshot.png in the root dir of this project
+To see what the current (crappy) board/attacker notation looks like, see screenshot.png in the root dir of this project.
+
+Currently the board needs to start off with some html.  To use the board yourself, you need to install ruby and sinatra and run
+
+    ruby server.rb
+
+Sinatra will tell you the port it's running on (default 4567).
 
 # Documentation
 
