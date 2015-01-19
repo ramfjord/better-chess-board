@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/pieces.css">
+    <script src="js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="js/lodash.js" type="text/javascript"></script>
+    <script src="js/board.js" type="text/javascript"></script>
+    <script src="js/pieces.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class=board>
+      <div class=squares>
+      <% (0...8).each do |r| #rank %>
+        <% (0...8).each do |f| #file %>
+        <div class="square <%= ((r + f) % 2 == 1) ? "dark" : "light" %>"
+             data-pgn=<%= "#{('a'.ord+f).chr}#{8-r}"%>></div>
+        <% end %>
+      <% end %>
+      </div>
+    </div>
+  </body>
+  <script>
+    $(function() {
+      board.init();
+    });
+  </script>
+</html>
