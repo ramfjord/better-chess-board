@@ -241,6 +241,12 @@ var board = (function() {
       this.get(1,f).place(pieces.pawn(this.LIGHT));
       this.get(6,f).place(pieces.pawn(this.DARK));
     }
+
+    for(var f = 0; f < 8; f++) {
+      for(var r = 2; r < 6; r++) {
+        this.get(r, f).clear();
+      }
+    }
   };
 
   return __;
