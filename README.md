@@ -56,6 +56,7 @@ Roughly prioritized list
 * Make prettier/more functional markers for which pieces are attacking which squares
   * refactor out code/css for marking attacked squares, so that different methods can be plugged in at will
 * Add pgn notation parser/generator
+* keep track of move history
 * When you are moving a piece, updated the attacked squares as if you've moved it to the square you're hovering over
 * Add board flip animations
 * Indicate multiple attackers in case of "batteries", by which I mean a queen backing up a bishop, or rooks piling on the same file, or even a bishop defending a pawn.  In the last case, one of the pawns attack squares should also show as attacked by the bishop.
@@ -63,3 +64,5 @@ Roughly prioritized list
 * Add tests
 * Add FEN parser/generator
 * Add pgn/fen display
+* Add minified single js + css file for usage
+* Separate out dom linking code, so we could plug in different html models
