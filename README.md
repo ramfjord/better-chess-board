@@ -55,8 +55,11 @@ Roughly prioritized list
 
 * Make prettier/more functional markers for which pieces are attacking which squares
   * refactor out code/css for marking attacked squares, so that different methods can be plugged in at will
-* Add pgn notation parser + loader
+* Add pgn notation parser/generator
 * When you are moving a piece, updated the attacked squares as if you've moved it to the square you're hovering over
 * Add board flip animations
 * Indicate multiple attackers in case of "batteries", by which I mean a queen backing up a bishop, or rooks piling on the same file, or even a bishop defending a pawn.  In the last case, one of the pawns attack squares should also show as attacked by the bishop.
 * Move all board creation logic into board.init(), so I don't have to have this simple sinatra backend
+* Add tests
+* Add FEN parser/generator
+* Add pgn/fen display
