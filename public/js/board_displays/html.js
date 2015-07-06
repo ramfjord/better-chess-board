@@ -1,8 +1,8 @@
-basic_board_dom = {
+BOARD_DISPLAYS = { "html" : {
   get_board: function() { return $('.board'); },
 
-  square_selector: function(rank, file) {
-    return "div.square:eq(" + (((7 - rank) * 8) + file) + ")";
+  get_square: function(rank, file) {
+    return $("div.square:eq(" + (((7 - rank) * 8) + file) + ")");
   },
 
   bind_piece_callbacks: function() {
@@ -55,4 +55,4 @@ basic_board_dom = {
       $(this).off('mousedown');
     });
   }
-}
+} }

@@ -12,7 +12,7 @@ Sinatra will tell you the port it's running on (default 4567).
 
 # Documentation
 
-This is a small project, so for now I'm keeping the docs in one place.
+Right now this is a small project, so for now I'm keeping the docs in one place.
 
 the `pieces` namespace exposes constructors for each of the pieces.  There is a lower case constructor function for each piece type, and each takes a color argument (either board.LIGHT or board.DARK).
 

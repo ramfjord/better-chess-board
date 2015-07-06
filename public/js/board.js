@@ -8,11 +8,13 @@ var board = (function() {
     , candidate_square
     , from_square
     , move_history = []
-    , dom_strategy = basic_board_dom
+
+    , board_display = BOARD_DISPLAYS.html
+
     , attacker_display = basic_attacker_display
   ;
 
-  __.$get = dom_strategy.get_board;
+  __.$get = board_display.get_board;
 
   __.DARK  = "d";
   __.LIGHT = "l";
@@ -24,12 +26,11 @@ var board = (function() {
   var square = function(rank, file) {
     var piece = null
       , color = ((rank + file) % 2 == 0) ? __.DARK : __.LIGHT
-      , selector = dom_strategy.square_selector(rank, file)
 
       , attacking = []
       , attackers = {}
 
-      , bind_piece_callbacks = dom_strategy.bind_piece_callbacks
+      , bind_piece_callbacks = board_display.bind_piece_callbacks
       , display_attackers = attacker_display.display_attackers
 
       , that = {
@@ -37,13 +38,9 @@ var board = (function() {
           file:     function() { return file; },
           piece:    function() { return piece; },
           color:    function() { return color; },
-          pgn_code: function() { return __.pgn_code(rank, file); }
+          pgn_code: function() { return __.pgn_code(rank, file); },
+          $get:     function() { return board_display.get_square(rank, file); }
       };
-
-    // Return the square in the DOM
-    that.$get = function() {
-      return $(selector);
-    };
 
     // mark all squares attacked by the piece in that square
     that.mark_attacking = function() {
