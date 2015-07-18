@@ -1,142 +1,48 @@
 // The board is basically a 2d array of squares
 var board = (function() {
   "use strict";
-  var __ = {} // board object to return
-
     // board private variables
-    , held_piece
-    , candidate_square
-    , from_square
-    , move_history = []
-
-    , board_display = BOARD_DISPLAYS.html
-
-    , attacker_display = basic_attacker_display
+  var display = Display
+    , overlay = Overlay.none
+    , squares = []
   ;
 
-  __.$get = board_display.get_board;
+  var getter = function(value) {
+    return function() { return value };
+  }
 
-  __.DARK  = "d";
-  __.LIGHT = "l";
+  var __ = { // board object to return
+    $get : display.board,
+    display : getter(display),
+    overlay : getter(overlay),
+    squares : getter(squares),
+    DARK  : "d",
+    LIGHT : "l"
+  }
+
+  __.set_overlay = function(new_overlay) {
+    overlay.clear();
+    overlay = new_overlay;
+    overlay.init();
+    this.overlay = getter(overlay);
+  }
 
   __.pgn_code = function(rank, file) {
     return String.fromCharCode("a".charCodeAt() + file) + (rank + 1);
   }
 
-  var square = function(rank, file) {
-    var piece = null
-      , color = ((rank + file) % 2 == 0) ? __.DARK : __.LIGHT
-
-      , attacking = []
-      , attackers = {}
-
-      , bind_piece_callbacks = board_display.bind_piece_callbacks
-      , display_attackers = attacker_display.display_attackers
-
-      , that = {
-          rank:     function() { return rank; },
-          file:     function() { return file; },
-          piece:    function() { return piece; },
-          color:    function() { return color; },
-          pgn_code: function() { return __.pgn_code(rank, file); },
-          $get:     function() { return board_display.get_square(rank, file); }
-      };
-
-    // mark all squares attacked by the piece in that square
-    that.mark_attacking = function() {
-      var now_attacking = (piece && piece.attacks()) || [];
-      var me = this;
-      _(_.difference(now_attacking, attacking)).forEach(function(sq) { sq.add_attacker(me) });
-      _(_.difference(attacking, now_attacking)).forEach(function(sq) { sq.remove_attacker(me) });
-      attacking = now_attacking;
-    };
-
-    // Clears a square on the board, removing any pieces and recalculating attacks
-    that.clear = function() {
-      if(piece) {
-        that.$get().children("img").remove();
-        piece = null;
-
-        that.mark_attacking();
-        
-        // if we're now blocking attacks, mark that
-        _(attackers).forEach(function(a) {
-          a.mark_attacking();
-        });
-      }
-    };
-
-    // Clears the square, marks the piece that was occupying it as held, and returns
-    // the piece now being held
-    that.pick_up = function() {
-      held_piece = piece; // board global
-      from_square = this;
-      this.clear();
-      return held_piece;
-    };
-
-    // Place a piece on the board, recalculating all the attacks that affect
-    // that square
-    that.place = function(new_piece) {
-      this.clear();
-      piece = new_piece;
-
-      if (piece) {
-        piece.place(this);
-        this.$get().append("<img src=\"" + piece.image_url() + "\">");
-        this.mark_attacking();
-
-        // if we're now blocking attacks, mark that
-        _(attackers).forEach(function(a) {
-          a.mark_attacking();
-        });
-
-        bind_piece_callbacks.apply(this);
-      }
-    };
-
-    // Place the piece that is currently being "held" by the game board, if any
-    that.place_held_piece = function() {
-      that.place(held_piece);
-      held_piece = undefined;
-    }
-
-    // Tell a square that it is now being attacked by another one
-    that.add_attacker = function(square) {
-      attackers[square.pgn_code()] = square;
-      display_attackers.apply(this, [attackers]);
-    }
-
-    // Tell a square that it is no longer being attacked by another one
-    that.remove_attacker = function(square) {
-      delete attackers[square.pgn_code()];
-      display_attackers.apply(this, [attackers]);
-    }
-
-    return that;
-  };
-
-  var file_pgn = function(file) {
-    return String.fromCharCode('a'.charCodeAt() + file);
-  };
-
-  // initialize squares.  They do not have to be linked to the DOM yet - but we
-  // are assuming we will always use an 8*8 board
-  var squares = []
-  for(var rank = 0; rank < 8; rank++) {
-    squares[rank] = [];
-    for(var file = 0; file < 8; file++) {
-      squares[rank][file] = square(rank, file);
-    }
-  }
-
   __.get = function() {
     // get pgn code
     if (arguments.length == 1) {
-      var file = arguments[0][0].charCodeAt() - 'a'.charCodeAt()
-        , rank = _.parseInt(arguments[0][1]) - 1
+      if (typeof arguments[0] == 'string') {
+        var file = arguments[0][0].charCodeAt() - 'a'.charCodeAt()
+          , rank = _.parseInt(arguments[0][1]) - 1
 
-      return this.get(rank, file);
+        return this.get(rank, file);
+      }
+      else {
+        return square;
+      }
 
     // get rank,file
     } else if (arguments.length == 2) {
@@ -176,7 +82,19 @@ var board = (function() {
         this.get(r, f).clear();
       }
     }
+
+    this.bind_callbacks();
+    this.set_overlay(Overlay.all_attacks);
   };
+
+  // Initialize squares.  They do not have to be linked to the DOM yet - but we
+  // are assuming we will always use an 8*8 board
+  for(var rank = 0; rank < 8; rank++) {
+    squares[rank] = [];
+    for(var file = 0; file < 8; file++) {
+      squares[rank][file] = square(__, rank, file);
+    }
+  }
 
   return __;
 })();
