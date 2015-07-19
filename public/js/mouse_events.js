@@ -22,9 +22,6 @@ board.bind_callbacks = function() {
         sq.$get().addClass('valid-move');
       });
 
-      console.log("moves for "  + square.pgn_code());
-      console.log(_.map(piece.moves(), function(e) { return e.pgn_code() }));
-
       square.clear();
 
       // keep the piece next to the mouse when you move it
@@ -55,7 +52,7 @@ board.bind_callbacks = function() {
       $(this).off('mousedown');
     };
 
-  _.forEach(_.flatten(board.squares()), function(square) {
+  board.eachSquare(function(square) {
     square.$get().on('mousedown', function(e1) { mouse_down(square, e1) });
   });
 }

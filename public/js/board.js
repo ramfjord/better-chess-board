@@ -53,6 +53,10 @@ var board = (function() {
     // return undefined by default
   };
 
+  __.eachSquare = function(f) {
+    _.forEach(_.flatten(squares), f)
+  };
+
   __.init = function() {
     this.get('a1').place(pieces.rook(this.LIGHT));
     this.get('h1').place(pieces.rook(this.LIGHT));
