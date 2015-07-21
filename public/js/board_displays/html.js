@@ -2,7 +2,7 @@ var Display = {
   board: function() { return $('.board'); },
 
   squares: function() {
-    return $('.squares');
+    return $('.board .square');
   },
 
   get_square: function(rank, file) {

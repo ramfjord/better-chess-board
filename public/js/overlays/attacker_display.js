@@ -1,7 +1,7 @@
 Overlay.all_attacks = {
   /* Initialize any resources (i.e. DOM elements) you will need here */
   init: function() {
-    board.display().squares().append("<div class=attackers>");
+    board.display().squares().append("<div class=attackers></div>");
     this.update();
   },
 
@@ -18,7 +18,7 @@ Overlay.all_attacks = {
 
   /* This should remove any reasources created in init() */
   clear: function() {
-    board.display().board().children('.attackers').remove();
+    board.display().board().find('.attackers').remove();
   },
 
 
@@ -58,7 +58,7 @@ Overlay.all_attacks = {
 
       , col_light = (num_light >= colors.length) ? _.last(colors) : colors[num_light]
       , col_dark  = (num_dark >= colors.length)  ? _.last(colors) : colors[num_dark]
-      , $attackers = square.$get().children('.attackers');
+      , $attackers = square.$get().find('.attackers');
 
     $attackers.css('border-top-color', col_dark);
     $attackers.css('border-right-color', col_dark);

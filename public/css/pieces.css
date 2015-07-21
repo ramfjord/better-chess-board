@@ -82,6 +82,13 @@
   user-select: none;
 }
 
+.square .hanging {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 .square.dark {
   background: lightsteelblue
 }
