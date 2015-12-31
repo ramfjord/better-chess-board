@@ -13,19 +13,13 @@ Overlay.hanging_pieces = {
   },
 
   update: function() {
-    var squares = board.squares();
-
-    for(var rank = 0; rank < 8; rank++) {
-      for(var file = 0; file < 8; file++) {
-        var sq = squares[rank][file];
-
-        if (this.isHanging(sq)) {
-          this.markHanging(sq.$get());
-        } else {
-          this.clearHanging(sq.$get());
-        }
+    Overlay.base.update_all_squares(function(sq) {
+      if (this.isHanging(sq)) {
+        this.markHanging(sq.$get());
+      } else {
+        this.clearHanging(sq.$get());
       }
-    }
+    })
   },
 
   clear: function() {

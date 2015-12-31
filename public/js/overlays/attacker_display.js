@@ -21,22 +21,7 @@ Overlay.all_attacks = {
     board.display().board().find('.attackers').remove();
   },
 
-
-  attacker_counts: function(square) {
-    var attackers = square.attackers()
-      , num_dark = 0, num_light = 0;
-
-    _.forEach(attackers, function (a) {
-      if (a.piece().color() == board.LIGHT) {
-        num_light += 1;
-      }
-      else {
-        num_dark += 1;
-      }
-    });
-
-    return [num_light, num_dark];
-  },
+  attacker_counts: Overlay.base.attacker_counts,
 
   display_attackers: function(square) {
     var colors = [ 'transparent'

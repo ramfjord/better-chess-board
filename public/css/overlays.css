@@ -1,0 +1,51 @@
+@font-face {
+  font-family: thin-numbers;
+  src: url(fonts/Lato-Light.ttf);
+}
+
+div.numAttackers {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+div.numAttackers.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+div.numAttackers div.section{
+  height: 50%;
+  margin: 0;
+  padding: 0;
+  z-index: 3;
+  position: relative;
+}
+
+div.numAttackers div.black, div.numAttackers div.white {
+  z-index: 100;
+  width: 100%;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-size: 40;
+  font-family: thin-numbers;
+}
+
+div.numAttackers div.black {
+  color: darkgray;
+}
+
+div.numAttackers div.white {
+  color: lightgray;
+}
+
+/* shamelessly stolen from http://stackoverflow.com/a/24830432/698210 */
+div.bottom-aligner {
+    display: inline-block;
+    height: 100%;
+    vertical-align: bottom;
+    width: 0px;
+}

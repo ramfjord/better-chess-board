@@ -3,7 +3,7 @@ var board = (function() {
   "use strict";
     // board private variables
   var display = Display
-    , overlay = Overlay.none
+    , overlay = Overlay.base
     , squares = []
   ;
 
@@ -88,7 +88,7 @@ var board = (function() {
     }
 
     this.bind_callbacks();
-    this.set_overlay(Overlay.all_attacks);
+    this.set_overlay(Overlay.num_attacks);
   };
 
   // Initialize squares.  They do not have to be linked to the DOM yet - but we
