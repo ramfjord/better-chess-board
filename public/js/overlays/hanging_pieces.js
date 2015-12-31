@@ -13,7 +13,7 @@ Overlay.hanging_pieces = {
   },
 
   update: function() {
-    Overlay.base.update_all_squares(function(sq) {
+    Overlay.base.update_all_squares.call(this, function(sq) {
       if (this.isHanging(sq)) {
         this.markHanging(sq.$get());
       } else {
