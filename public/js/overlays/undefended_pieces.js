@@ -1,0 +1,3 @@
+Overlay.undefended_pieces = {
+  
+}

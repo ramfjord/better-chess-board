@@ -7,14 +7,14 @@ function square(board, rank, file) {
     , attackers = {} // { pgn_code : square, ... }
 
     , that = {
-        rank:     function() { return rank; },
-        file:     function() { return file; },
-        piece:    function() { return piece; },
-        color:    function() { return color; },
-        pgn_code: function() { return pgn_code; },
+        rank:      function() { return rank; },
+        file:      function() { return file; },
+        piece:     function() { return piece; },
+        color:     function() { return color; },
+        pgn_code:  function() { return pgn_code; },
         attacking: function() { return _.clone(attacking); },
         attackers: function() { return _.values(attackers); },
-        $get:     function() { return board.display().get_square(rank, file); }
+        $get:      function() { return board.display().get_square(rank, file); }
     };
 
   // Resets the attacking squares
