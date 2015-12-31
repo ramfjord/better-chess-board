@@ -52,9 +52,9 @@ function square(board, rank, file) {
   };
 
   // Place a piece on the board, recalculating all the attacks that affect
-  // that square
+  // that square. Returns the piece that was previously on the square (or null)
   that.place = function(new_piece) {
-    this.clear();
+    var old_piece = this.clear();
     piece = new_piece;
 
     if (piece) {
@@ -71,7 +71,7 @@ function square(board, rank, file) {
       board.overlay().update();
     }
 
-    return piece;
+    return old_piece;
   };
 
   // Tell a square that it is now being attacked by another one

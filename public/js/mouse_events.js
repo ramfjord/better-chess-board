@@ -1,18 +1,30 @@
 board.bind_callbacks = function() {
-  var held_piece = null
+  var piece = null
+    , captured_piece = null
+    , current_square = null
+
+    , mouse_move = function(to_square) {
+        if (to_square.pgn_code() != current_square.pgn_code()) {
+          new_captured_piece = to_square.place(piece);
+          current_square.place(captured_piece);
+          current_square = to_square;
+        }
+    }
 
     , mouse_up = function(square, piece) {
+        mouse_move(square);
         $('.square.valid-move').removeClass('valid-move');
         $('.square').off('mouseup');
+        $('.square').off('mouseenter');
         $(document).off('mousemove');
         $('.board').off('mouseleave');
         $('#held_piece').remove();
         square.place(piece);
-        square.$get().on('mousedown', function(e1) { mouse_down(square, e1) });
-      }
+    }
 
     , mouse_down = function(square, e1) {
-      var piece = square.piece();
+      piece = square.piece();
+      current_square = square;
 
       // don't bind any events if there is no piece on this square
       if (!piece) { return ; }
@@ -21,8 +33,6 @@ board.bind_callbacks = function() {
       _(piece.moves()).forEach(function(sq) {
         sq.$get().addClass('valid-move');
       });
-
-      square.clear();
 
       // keep the piece next to the mouse when you move it
       board.$get().append('<img id=held_piece src="' + piece.image_url() + '" ' + 
@@ -38,6 +48,16 @@ board.bind_callbacks = function() {
         mouse_up(sq, piece);
       });
 
+      // update the display as if a piece was placed before making a move.
+      $('.square').on('mouseenter', function() {
+        if ($(this).hasClass('valid-move')) {
+          var to_square = board.get($(this).data().pgn);
+        } else {
+          var to_square = square;
+        }
+        mouse_move(to_square);
+      });
+
       // if you drag the piece off the board, just return it
       $('.board').on('mouseleave', function() {
         mouse_up(square, piece);
@@ -47,11 +67,7 @@ board.bind_callbacks = function() {
       $('.square:not(.valid-move)').on('mouseup', function() {
         mouse_up(square, piece);
       });
-
-      // we can no longer lift up this piece on this square...
-      $(this).off('mousedown');
     };
-
   board.eachSquare(function(square) {
     square.$get().on('mousedown', function(e1) { mouse_down(square, e1) });
   });
