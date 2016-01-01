@@ -1,7 +1,7 @@
 // The board is basically a 2d array of squares
 var board = (function() {
   "use strict";
-    // board private variables
+  // board private variables
   var display = Display
     , overlay = Overlay.base
     , squares = []
@@ -57,36 +57,29 @@ var board = (function() {
     _.forEach(_.flatten(squares), f)
   };
 
-  __.init = function() {
-    this.get('a1').place(pieces.rook(this.LIGHT));
-    this.get('h1').place(pieces.rook(this.LIGHT));
-    this.get('b1').place(pieces.knight(this.LIGHT));
-    this.get('g1').place(pieces.knight(this.LIGHT));
-    this.get('c1').place(pieces.bishop(this.LIGHT));
-    this.get('f1').place(pieces.bishop(this.LIGHT));
-    this.get('d1').place(pieces.queen(this.LIGHT));
-    this.get('e1').place(pieces.king(this.LIGHT));
+  __.read_fen = function(fen) {
+    var parts = fen.split(/\s+/g)
+      , rows = parts[0].split('/').reverse();
 
-    this.get('a8').place(pieces.rook(this.DARK));
-    this.get('h8').place(pieces.rook(this.DARK));
-    this.get('b8').place(pieces.knight(this.DARK));
-    this.get('g8').place(pieces.knight(this.DARK));
-    this.get('c8').place(pieces.bishop(this.DARK));
-    this.get('f8').place(pieces.bishop(this.DARK));
-    this.get('d8').place(pieces.queen(this.DARK));
-    this.get('e8').place(pieces.king(this.DARK));
-
-    for(var f = 0; f < 8; f++) {
-      this.get(1,f).place(pieces.pawn(this.LIGHT));
-      this.get(6,f).place(pieces.pawn(this.DARK));
-    }
-
-    for(var f = 0; f < 8; f++) {
-      for(var r = 2; r < 6; r++) {
-        this.get(r, f).clear();
+    for(var rank = 0; rank < 8; rank++) {
+      var row = rows[rank];
+      for (var file = 0, i = 0, r_len = row.length; i < r_len; i++) {
+        var cur = row[i];
+        if(cur.match(/[0-9]/)) {
+          for (var j = 0, len = parseInt(cur); j < len; j++) {
+            this.get(rank, file).clear();
+            file += 1;
+          }
+        } else {
+          this.get(rank, file).place(pieces.from_fen(cur));
+          file += 1;
+        }
       }
     }
+  }
 
+  __.init = function() {
+    this.read_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     this.bind_callbacks();
     this.set_overlay(Overlay.num_attacks);
   };

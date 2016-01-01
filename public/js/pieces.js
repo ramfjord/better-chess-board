@@ -171,5 +171,26 @@ var pieces = (function() {
     return that;
   };
 
+  var fen_map = {
+    "p" : [__.pawn   , board.DARK],
+    "n" : [__.knight , board.DARK],
+    "b" : [__.bishop , board.DARK],
+    "r" : [__.rook   , board.DARK],
+    "q" : [__.queen  , board.DARK],
+    "k" : [__.king   , board.DARK],
+    "P" : [__.pawn   , board.LIGHT],
+    "N" : [__.knight , board.LIGHT],
+    "B" : [__.bishop , board.LIGHT],
+    "R" : [__.rook   , board.LIGHT],
+    "Q" : [__.queen  , board.LIGHT],
+    "K" : [__.king   , board.LIGHT],
+  }
+  __.from_fen = function(fen_char) {
+    var c_c = fen_map[fen_char]
+      , constructor = c_c[0]
+      , color = c_c[1];
+    return constructor(color);
+  }
+
   return __;
 })();
